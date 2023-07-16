@@ -55,6 +55,7 @@ const disableButtons = () => {
 const enableButtons = () => {
     btnRef.forEach((element) => {
         element.innerText = "";
+        element.title = "";
         element.disabled = false;
         element.style.backgroundColor = "#ffffff";
     });
@@ -192,7 +193,7 @@ input.onkeyup = (e) => {
     if (userData) {
         emptyArray = suggestions.filter(function(el) {
             //filtering array value and user characters to lowercase and return only those words which are start with user enetered chars
-            return el.Name.toLocaleLowerCase().includes(userData.toLocaleLowerCase());
+            return el.Name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(userData.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
         });
         emptyArray = emptyArray.map((data) => {
             // passing return data inside li tag
