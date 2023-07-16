@@ -1,0 +1,216 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Raleway", sans-serif;
+}
+
+body {
+    height: 100vh;
+    /*background: linear-gradient(135deg, #8052ec, #d161ff);*/
+    background-image: url('ice2.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+html {
+    font-size: 16px;
+}
+
+:disabled {
+    background-color: rgb(210, 210, 210);
+}
+
+.wrapper {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 55%;
+    left: 45.78%;
+}
+
+.container {
+    width: 70vmin;
+    height: 70vmin;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2vmin;
+}
+
+.button-option {
+    background: #ffffff;
+    height: 16vmin;
+    width: 16vmin;
+    border: none;
+    border-radius: 8px;
+    font-size: 2vmin;
+    /*color: #d161ff;*/
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.teams-option {
+    background: rgba(255, 255, 255, 0);
+    height: 16vmin;
+    width: 16vmin;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 2vmin;
+    text-align: center;
+}
+
+#turn {
+    border-radius: 100px;
+}
+
+#restart {
+    font-size: 1em;
+    padding: 0.65em;
+    border-radius: 8px;
+    background-color: #0a0027;
+    color: #ffffff;
+    border: none;
+    position: sticky;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    top: 93%;
+    cursor: pointer;
+}
+
+.searchInput {
+    background: #fff;
+    width: 25%;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: 0px 1px 5px 3px rgba(0, 0, 0, 0.12);
+    /*left: 37.5%;*/
+    margin-left: auto;
+    margin-right: auto;
+    top: 3%;
+}
+
+.searchInput input {
+    height: 35px;
+    width: 100%;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 0 60px 0 20px;
+    font-size: 18px;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.searchInput.active input {
+    border-radius: 5px 5px 0 0;
+}
+
+.searchInput .resultBox {
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+.searchInput.active .resultBox {
+    padding: 10px 8px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.resultBox li {
+    list-style: none;
+    padding: 8px 12px;
+    display: none;
+    width: 100%;
+    cursor: default;
+    border-radius: 3px;
+}
+
+.searchInput.active .resultBox li {
+    display: block;
+}
+
+.resultBox li:hover {
+    background: #efefef;
+}
+
+.searchInput .icon {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 55px;
+    width: 55px;
+    text-align: center;
+    line-height: 55px;
+    font-size: 20px;
+    color: #644bff;
+    cursor: pointer;
+}
+
+.select {
+    position: absolute;
+    right: 0%;
+    top: 0%;
+    text-align: center;
+    cursor: pointer;
+}
+
+#select {
+    font-size: 1em;
+    padding: 0.5em;
+    border-radius: 4px;
+    background-color: green;
+    color: #ffffff;
+    border: none;
+    position: sticky;
+    display: block;
+    cursor: pointer;
+}
+
+.popup {
+    /*background: linear-gradient(135deg, #8052ec, #d161ff);*/
+    background-image: url('ice2.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    z-index: 2;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2em;
+    font-size: 6vmin;
+}
+
+#new-game {
+    font-size: 0.6em;
+    padding: 0.5em 1em;
+    background-color: #0a0027;
+    color: #ffffff;
+    border-radius: 0.2em;
+    border: none;
+}
+
+#message {
+    color: #000000;
+    text-align: center;
+    font-size: 0.6em;
+}
+
+#title {
+    color: #000000;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.popup.hide {
+    display: none;
+}
+
+.game.hide {
+    display: none;
+}

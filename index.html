@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" rel="stylesheet">
+<!-- Stylesheet -->
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <span class="game hide">
+        <div class="searchInput">
+            <input type="text" placeholder="Search Player.." disabled>
+            <div class="resultBox">
+                <!-- here list are inserted from javascript -->
+            </div>
+            <div class="select"><button id="select" onclick="confirmPlayer()">Select</button></div>
+        </div>
+    
+        <div class="wrapper">
+            <div class="container">
+                <button class="teams-option" id="turn" style="background-color: blue;">Now playing : Player 1</button>
+                <img class="teams-option" id="C1" src="">
+                <img class="teams-option" id="C2" src="">
+                <img class="teams-option" id="C3" src="">
+                <img class="teams-option" id="R1" src="">
+                <button class="button-option" id="0"></button>
+                <button class="button-option" id="1"></button>
+                <button class="button-option" id="2"></button>
+                <img class="teams-option" id="R2" src="">
+                <button class="button-option" id="3"></button>
+                <button class="button-option" id="4"></button>
+                <button class="button-option" id="5"></button>
+                <img class="teams-option" id="R3" src="">
+                <button class="button-option" id="6"></button>
+                <button class="button-option" id="7"></button>
+                <button class="button-option" id="8"></button>
+            </div>
+        </div>
+        <button id="restart">New Game</button>
+    </span>
+
+    <div class="popup">
+        <p id="title">NHL Tic Tac Toe</p>
+        <br>
+        <p id="message">Test your NHL knowledge and challenge your friends!</p>
+        <br>
+        <button id="new-game">New Game</button>
+    </div>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
