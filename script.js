@@ -5,10 +5,20 @@ let gameRef = document.querySelector(".game");
 let newgameBtn = document.getElementById("new-game");
 let restartBtn = document.getElementById("restart");
 let msgRef = document.getElementById("message");
+let playerTurnRef = document.getElementById("turn");
+let playerGuessesRef = document.getElementById("guess");
+let fillRef = document.getElementById("fill");
+let tictactoeBtn = document.getElementById("tictactoe");
+let gridBtn = document.getElementById("grid");
+let gridvariantBtn = document.getElementById("gridvariant");
 const searchInput = document.querySelector(".searchInput");
 const input = searchInput.querySelector("input");
 const resultBox = searchInput.querySelector(".resultBox");
 const icon = searchInput.querySelector(".icon");
+
+const TIC_TAC_TOE = "TicTacToe";
+const TRADITIONAL_GRID = "Grid";
+const GRID_VARIANT = "GridVariant";
 
 //Winning Pattern Array
 let winningPattern = [
@@ -33,7 +43,9 @@ let teamsCorrespondance = [
     ['R3', 'C2'],
     ['R3', 'C3'],
 ];
-//Player 'X' plays first
+
+let powerplayAnswers = [];
+
 let P1turn = true;
 let count = 0;
 
@@ -42,6 +54,10 @@ let players = [];
 let suggestions = [];
 let selectedPlayer = "";
 let selectedCaseId = null;
+let selectedGameMode = TIC_TAC_TOE;
+let correctguesses = 0;
+let countdownInterval = null;
+let isCountdownStarted = false;
 
 //Disable All Buttons
 const disableButtons = () => {
@@ -118,6 +134,20 @@ const winFunction = (letter) => {
     }, 2000);
 };
 
+const endGameGridFunction = () => {
+    setTimeout(function() {
+        disableButtons();
+        msgRef.innerHTML = "Your final score : " + correctguesses + "/9";
+    }, 2000);
+};
+
+const endGameVariantGridFunction = (totalPoints) => {
+    setTimeout(function() {
+        disableButtons();
+        msgRef.innerHTML = "Your final score : " + correctguesses + "/9 and a total of " + totalPoints + " points";
+    }, 2000);
+};
+
 //Function for draw
 const drawFunction = () => {
     setTimeout(function() {
@@ -130,20 +160,59 @@ const drawFunction = () => {
 newgameBtn.addEventListener("click", () => {
     count = 0;
     P1turn = true;
+    powerplayAnswers = [];
+    selectedPlayer = "";
+    selectedCaseId = null;
+    countdownInterval = null;
+    isCountdownStarted = false;
+    correctguesses = 0;
     document.getElementById("turn").innerHTML = "Now Playing : Player 1";
     document.getElementById("turn").style.backgroundColor = "blue";
     enableButtons();
     displayTeams();
     gameRef.classList.remove("hide");
+    showElementsBasedOnGameMode();
 });
 
 restartBtn.addEventListener("click", () => {
+    correctguesses = 0;
     count = 0;
     P1turn = true;
+    powerplayAnswers = [];
+    selectedPlayer = "";
+    selectedCaseId = null;
+    countdownInterval = null;
+    isCountdownStarted = false;
     document.getElementById("turn").innerHTML = "Now Playing : Player 1";
     document.getElementById("turn").style.backgroundColor = "blue";
     enableButtons();
     displayTeams();
+    showElementsBasedOnGameMode();
+
+});
+
+tictactoeBtn.addEventListener("click", () => {
+    selectedGameMode = TIC_TAC_TOE;
+    newgameBtn.style.visibility = "visible";
+    tictactoeBtn.style.backgroundColor = "green";
+    gridBtn.style.backgroundColor = "#0a0027";
+    gridvariantBtn.style.backgroundColor = "#0a0027";
+});
+
+gridBtn.addEventListener("click", () => {
+    selectedGameMode = TRADITIONAL_GRID;
+    newgameBtn.style.visibility = "visible";
+    gridBtn.style.backgroundColor = "green";
+    tictactoeBtn.style.backgroundColor = "#0a0027";
+    gridvariantBtn.style.backgroundColor = "#0a0027";
+});
+
+gridvariantBtn.addEventListener("click", () => {
+    selectedGameMode = GRID_VARIANT;
+    newgameBtn.style.visibility = "visible";
+    gridvariantBtn.style.backgroundColor = "green";
+    tictactoeBtn.style.backgroundColor = "#0a0027";
+    gridBtn.style.backgroundColor = "#0a0027";
 });
 
 //Win Logic
@@ -171,10 +240,18 @@ btnRef.forEach((element) => {
 });
 
 function selectCase(element) {
-    // Bring background color of previously selected case back to white
-    btnRef.forEach((element) => {
-        if (!element.disabled) element.style.backgroundColor = "#ffffff";
-    });
+    if (selectedGameMode != GRID_VARIANT) {
+        // Bring background color of previously selected case back to white
+        btnRef.forEach((element) => {
+            if (!element.disabled) element.style.backgroundColor = "#ffffff";
+        });
+    } else {
+        btnRef.forEach((element) => {
+            if (element.style.backgroundColor == "rgb(102, 255, 102)" && element.innerText == "") element.style.backgroundColor = "#ffffff";
+            if (element.innerText != "") element.style.backgroundColor = "blue";
+        });
+    }
+
     // Green out the case onclick
     element.style.backgroundColor = "#66ff66";
 
@@ -229,6 +306,18 @@ function verifyPlayerValidity() {
 }
 
 function confirmPlayer() {
+    if (selectedGameMode == TIC_TAC_TOE) {
+        confirmPlayerTicTacToe();
+
+    } else if (selectedGameMode == TRADITIONAL_GRID) {
+        confirmPlayerTraditionalGrid();
+
+    } else if (selectedGameMode == GRID_VARIANT) {
+        confirmPlayerGridVariant();
+    }
+}
+
+function confirmPlayerTicTacToe() {
     if (selectedCaseId != null) {
         let playerIsValid = verifyPlayerValidity();
 
@@ -279,6 +368,75 @@ function confirmPlayer() {
     }
 }
 
+function confirmPlayerTraditionalGrid() {
+    if (selectedCaseId != null) {
+        let playerIsValid = verifyPlayerValidity();
+
+        element = document.getElementById(selectedCaseId);
+        element.style.backgroundColor = "#ffffff";
+        input.value = '';
+        input.disabled = true;
+        count += 1;
+
+        if (playerIsValid) {
+            element.style.backgroundColor = "blue";
+            element.innerText = selectedPlayer;
+            element.disabled = true;
+            correctguesses += 1;
+        }
+
+        selectedCaseId = null;
+        let guessesLeft = 9 - count;
+        playerGuessesRef.innerText = "Guesses left : " + guessesLeft.toString();
+
+        if (count == 9) {
+            endGameGridFunction();
+        }
+    }
+}
+
+function confirmPlayerGridVariant() {
+    if (selectedCaseId != null) {
+        let existingElement = powerplayAnswers.find(element => element.caseID == selectedCaseId);
+        if (existingElement != undefined) {
+            let index = powerplayAnswers.indexOf(existingElement);
+            powerplayAnswers.splice(index, 1);
+        }
+        powerplayAnswers.push({ caseID: selectedCaseId, player: selectedPlayer });
+
+        element = document.getElementById(selectedCaseId);
+        element.style.backgroundColor = "blue";
+        element.innerText = selectedPlayer;
+        input.value = '';
+        input.disabled = true;
+    }
+}
+
+function gridVariantConfirm() {
+    let totalPoints = 0;
+    powerplayAnswers.forEach((guess, index) => {
+        selectedCaseId = guess.caseID;
+        selectedPlayer = guess.player;
+        element = document.getElementById(selectedCaseId);
+        let playerIsValid = verifyPlayerValidity();
+        if (playerIsValid) {
+            element.style.backgroundColor = "green";
+            correctguesses += 1;
+            totalPoints += 10 - index;
+        } else {
+            element.style.backgroundColor = "red";
+            totalPoints -= 10 - index;
+        }
+        element.disabled = true;
+    });
+
+    endGameVariantGridFunction(totalPoints);
+}
+
+function home() {
+    window.location.reload();
+}
+
 function showSuggestions(list) {
     let listData;
     if (!list.length) {
@@ -290,9 +448,61 @@ function showSuggestions(list) {
     resultBox.innerHTML = listData;
 }
 
+function showElementsBasedOnGameMode() {
+    if (selectedGameMode == TIC_TAC_TOE) {
+        playerTurnRef.style.display = 'block';
+        playerGuessesRef.style.display = 'none';
+        fillRef.style.display = "none";
+
+    } else if (selectedGameMode == TRADITIONAL_GRID) {
+        playerTurnRef.style.display = 'none';
+        playerGuessesRef.style.display = 'block';
+        fillRef.style.display = "none";
+        playerGuessesRef.innerText = "Guesses left : 9";
+    } else if (selectedGameMode == GRID_VARIANT) {
+        playerTurnRef.style.display = 'none';
+        playerGuessesRef.style.display = 'none';
+        fillRef.style.display = "block";
+        if (!isCountdownStarted) {
+            setTimeout(function() {
+                isCountdownStarted = true;
+                targetTime = new Date().getTime() + 2 * 60 * 1000;
+                countdownInterval = setInterval(updateCountdown, 1000);
+            }, 1000);
+        } else {
+            isCountdownStarted = false;
+            document.getElementById("fill").textContent = "02:00";
+            setTimeout(function() {
+                isCountdownStarted = true;
+                targetTime = new Date().getTime() + 2 * 60 * 1000;
+                countdownInterval = setInterval(updateCountdown, 1000);
+            }, 1000);
+        }
+    }
+}
+
 //Enable Buttons and disable popup on page load
 window.onload = function() {
-    //enableButtons();
     fetchPlayers();
-    displayTeams();
+}
+
+// Function to update the countdown
+function updateCountdown() {
+    if (isCountdownStarted) {
+        const currentTime = new Date().getTime();
+        const remainingTime = targetTime - currentTime;
+
+        if (remainingTime <= 0) {
+            document.getElementById("fill").textContent = "00:00";
+            document.getElementById("fill").style.backgroundColor = "red";
+            clearInterval(countdownInterval);
+            gridVariantConfirm();
+            isCountdownStarted = false;
+        } else {
+            const minutes = Math.floor(remainingTime / (1000 * 60)).toString().padStart(2, "0");
+            const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000).toString().padStart(2, "0");
+            document.getElementById("fill").textContent = minutes + ":" + seconds;
+            if (minutes < 1 && seconds <= 30) document.getElementById("fill").style.backgroundColor = "yellow";
+        }
+    }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tic Tac Toe</title>
+<title>Ultimate NHL Grid Challenge</title>
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" rel="stylesheet">
 <!-- Stylesheet -->
@@ -11,6 +11,7 @@
 <body>
     <span class="game hide">
         <div class="searchInput">
+            <img id="homeBtn" onclick="home()" src="NHLTicTacToe\home-solid.svg">
             <input type="text" placeholder="Search Player.." disabled>
             <div class="resultBox">
                 <!-- here list are inserted from javascript -->
@@ -21,6 +22,8 @@
         <div class="wrapper">
             <div class="container">
                 <button class="teams-option" id="turn" style="background-color: blue;">Now playing : Player 1</button>
+                <button class="teams-option" id="guess" style="display: none;">Guesses left : 9</button>
+                <button id="fill" class="teams-option" style="display: none; background-color: #fff;">02:00</button>
                 <img class="teams-option" id="C1" src="">
                 <img class="teams-option" id="C2" src="">
                 <img class="teams-option" id="C3" src="">
@@ -38,15 +41,27 @@
                 <button class="button-option" id="8"></button>
             </div>
         </div>
-        <button id="restart">New Game</button>
+        <button id="restart">New Grid</button>
     </span>
 
     <div class="popup">
-        <p id="title">NHL Tic Tac Toe</p>
-        <br>
+        <p id="title">Ultimate NHL Grid Challenge</p>
         <p id="message">Test your NHL knowledge and challenge your friends!</p>
-        <br>
-        <button id="new-game">New Game</button>
+        <div id="gameMode">
+            <p id="gamemodemsg">Select a game mode : </p>
+            <div id="gameModes">
+                <button id="tictactoe" class="tooltip">Tic Tac Toe
+                                <span class="tooltiptext">1v1 classic Tic-Tac-Toe!</span>
+                            </button>
+                <button id="grid" class="tooltip">Grid Challenge
+                                <span class="tooltiptext">9 guesses to fill the grid!</span>
+                            </button>
+                <button id="gridvariant" class="tooltip">Power Play Challenge
+                                <span class="tooltiptext">Beat the clock and score points!</span>
+                            </button>
+            </div>
+        </div>
+        <button id="new-game" style="visibility: hidden;">Start Game</button>
     </div>
 
     <!-- Script -->
