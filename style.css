@@ -90,6 +90,21 @@ html {
     cursor: pointer;
 }
 
+#confirm {
+    font-size: 1em;
+    padding: 0.65em;
+    border-radius: 8px;
+    background-color: #0a0027;
+    color: #ffffff;
+    border: none;
+    position: sticky;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    top: 93%;
+    cursor: pointer;
+}
+
 #homeBtn {
     cursor: pointer;
     position: absolute;

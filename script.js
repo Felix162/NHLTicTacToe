@@ -4,6 +4,7 @@ let popupRef = document.querySelector(".popup");
 let gameRef = document.querySelector(".game");
 let newgameBtn = document.getElementById("new-game");
 let restartBtn = document.getElementById("restart");
+let confirmBtn = document.getElementById("confirm");
 let msgRef = document.getElementById("message");
 let playerTurnRef = document.getElementById("turn");
 let playerGuessesRef = document.getElementById("guess");
@@ -82,7 +83,7 @@ const enableButtons = () => {
 //
 const displayTeams = () => {
     teams = [];
-    fetch('teams.json')
+    fetch('teams.json') /*, { cache: "reload" }*/
         .then(response => response.json())
         .then(data => {
             teamRef.forEach((element) => {
@@ -96,6 +97,7 @@ const displayTeams = () => {
                     }
                 }
                 while (regenerate);
+
                 element.src = "Logos2/" + data[index].Id + ".svg";
                 element.title = data[index].Id;
             });
@@ -107,7 +109,7 @@ const displayTeams = () => {
 };
 
 const fetchPlayers = () => {
-    fetch('nhlplayers.json')
+    fetch('nhlplayers.json') /*, { cache: "reload" }*/
         .then(response => response.json())
         .then(data => {
             data.forEach((element) => {
@@ -145,7 +147,7 @@ const endGameVariantGridFunction = (totalPoints) => {
     setTimeout(function() {
         disableButtons();
         msgRef.innerHTML = "Your final score : " + correctguesses + "/9 and a total of " + totalPoints + " points";
-    }, 2000);
+    }, 5000);
 };
 
 //Function for draw
@@ -409,11 +411,12 @@ function confirmPlayerGridVariant() {
         element.innerText = selectedPlayer;
         input.value = '';
         input.disabled = true;
+        if (powerplayAnswers.length == 9) confirmBtn.style.display = "block";
     }
 }
 
-function gridVariantConfirm() {
-    let totalPoints = 0;
+function gridVariantConfirm(extraPoints) {
+    let totalPoints = extraPoints;
     powerplayAnswers.forEach((guess, index) => {
         selectedCaseId = guess.caseID;
         selectedPlayer = guess.player;
@@ -453,17 +456,23 @@ function showElementsBasedOnGameMode() {
         playerTurnRef.style.display = 'block';
         playerGuessesRef.style.display = 'none';
         fillRef.style.display = "none";
+        confirmBtn.style.display = "none";
 
     } else if (selectedGameMode == TRADITIONAL_GRID) {
         playerTurnRef.style.display = 'none';
         playerGuessesRef.style.display = 'block';
         fillRef.style.display = "none";
         playerGuessesRef.innerText = "Guesses left : 9";
+        confirmBtn.style.display = "none";
+
     } else if (selectedGameMode == GRID_VARIANT) {
         playerTurnRef.style.display = 'none';
         playerGuessesRef.style.display = 'none';
         fillRef.style.display = "block";
+        restartBtn.style.display = "none";
+
         if (!isCountdownStarted) {
+            document.getElementById("fill").style.backgroundColor = "#ffffff";
             setTimeout(function() {
                 isCountdownStarted = true;
                 targetTime = new Date().getTime() + 2 * 60 * 1000;
@@ -496,7 +505,7 @@ function updateCountdown() {
             document.getElementById("fill").textContent = "00:00";
             document.getElementById("fill").style.backgroundColor = "red";
             clearInterval(countdownInterval);
-            gridVariantConfirm();
+            gridVariantConfirm(0);
             isCountdownStarted = false;
         } else {
             const minutes = Math.floor(remainingTime / (1000 * 60)).toString().padStart(2, "0");
@@ -504,5 +513,18 @@ function updateCountdown() {
             document.getElementById("fill").textContent = minutes + ":" + seconds;
             if (minutes < 1 && seconds <= 30) document.getElementById("fill").style.backgroundColor = "yellow";
         }
+    }
+}
+
+function confirmGrid() {
+    if (isCountdownStarted) {
+        const currentTime = new Date().getTime();
+        const remainingTime = targetTime - currentTime;
+        const minutes = Math.floor(remainingTime / (1000 * 60)).toString().padStart(2, "0");
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000).toString().padStart(2, "0");
+        let score = parseInt(minutes) * 60 + parseInt(seconds);
+        clearInterval(countdownInterval);
+        gridVariantConfirm(score);
+        isCountdownStarted = false;
     }
 }
